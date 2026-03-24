@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">旧平板看板</string>
+    <string name="menu_exit">退出</string>
+    <string name="menu_settings">设定</string>
+    <string name="settings_title">应用设定</string>
+    <string name="settings_default_mode">默认启动模式</string>
+    <string name="settings_web_url">网页地址</string>
+    <string name="settings_web_url_hint">例如：http://192.168.1.100:3000</string>
+    <string name="settings_web_refresh">网页自动刷新间隔（秒）</string>
+    <string name="settings_weather_city">天气城市</string>
+    <string name="settings_weather_refresh">天气刷新间隔（分钟）</string>
+    <string name="settings_photo_directory">相册图片目录</string>
+    <string name="settings_photo_directory_hint">例如：/sdcard/Pictures</string>
+    <string name="settings_photo_interval">相册切换间隔（秒）</string>
+    <string name="settings_photo_mode">相册播放方式</string>
+    <string name="settings_keep_screen_on">前台运行时保持常亮</string>
+    <string name="settings_reset">恢复默认设定</string>
+    <string name="settings_save">保存设定</string>
+    <string name="weather_temp_format">%1$d°</string>
+    <string name="weather_range_format">最高 %1$d° / 最低 %2$d°</string>
+    <string name="web_error_hint">页面加载失败，请检查网页地址或网络连接。</string>
+    <string name="photo_empty_hint">未找到可用图片，请检查目录：\n%1$s</string>
+    <string name="photo_decode_error_hint">图片加载失败：%1$s</string>
+    <string name="photo_content_desc">相册图片</string>
+</resources>

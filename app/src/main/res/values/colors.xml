@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg_primary">#080B10</color>
+    <color name="bg_panel">#121821</color>
+    <color name="bg_overlay">#C61A2330</color>
+    <color name="text_primary">#F4F7FB</color>
+    <color name="text_secondary">#A4B0C0</color>
+    <color name="accent">#74B6FF</color>
+    <color name="stroke_soft">#263244</color>
+    <color name="button_bg">#243244</color>
+</resources>

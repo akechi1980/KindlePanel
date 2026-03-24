@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="default_mode_labels">
+        <item>本地看板模式</item>
+        <item>网页模式</item>
+        <item>相册模式</item>
+    </string-array>
+
+    <string-array name="photo_play_mode_labels">
+        <item>顺序播放</item>
+        <item>随机播放</item>
+    </string-array>
+</resources>
