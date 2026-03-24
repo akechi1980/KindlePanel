@@ -8,4 +8,5 @@
     <color name="accent">#74B6FF</color>
     <color name="stroke_soft">#263244</color>
     <color name="button_bg">#243244</color>
+    <color name="flip_divider">#314153</color>
 </resources>

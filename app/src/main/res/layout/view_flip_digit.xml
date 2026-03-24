@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_flip_digit_card">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        android:background="@drawable/bg_flip_digit_half_top" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bg_flip_digit_half_bottom" />
+
+    <TextView
+        android:id="@+id/text_digit_current"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="@color/text_primary"
+        android:textSize="72sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/text_digit_incoming"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="@color/text_primary"
+        android:textSize="72sp"
+        android:textStyle="bold"
+        android:alpha="0" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_gravity="center_vertical"
+        android:background="@color/flip_divider" />
+
+    <View
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="-4dp"
+        android:background="@drawable/bg_flip_hinge" />
+
+    <View
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginEnd="-4dp"
+        android:background="@drawable/bg_flip_hinge" />
+
+</FrameLayout>

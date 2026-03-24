@@ -37,12 +37,17 @@ public class DashboardFragment extends Fragment {
 
     private TextView dateView;
     private TextView weekView;
-    private TextView timeView;
+    private TextView colonView;
     private TextView cityView;
     private TextView descView;
     private TextView tempView;
     private TextView rangeView;
     private ImageView weatherIconView;
+    private FlipDigitView hourTensView;
+    private FlipDigitView hourOnesView;
+    private FlipDigitView minuteTensView;
+    private FlipDigitView minuteOnesView;
+    private String lastRenderedTime = "";
 
     public static DashboardFragment newInstance() {
         return new DashboardFragment();
@@ -60,12 +65,16 @@ public class DashboardFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         dateView = view.findViewById(R.id.text_date);
         weekView = view.findViewById(R.id.text_week);
-        timeView = view.findViewById(R.id.text_time);
+        colonView = view.findViewById(R.id.text_time_colon);
         cityView = view.findViewById(R.id.text_city);
         descView = view.findViewById(R.id.text_weather_desc);
         tempView = view.findViewById(R.id.text_current_temp);
         rangeView = view.findViewById(R.id.text_temp_range);
         weatherIconView = view.findViewById(R.id.image_weather_icon);
+        hourTensView = view.findViewById(R.id.digit_hour_tens);
+        hourOnesView = view.findViewById(R.id.digit_hour_ones);
+        minuteTensView = view.findViewById(R.id.digit_minute_tens);
+        minuteOnesView = view.findViewById(R.id.digit_minute_ones);
 
         updateClock();
         updateWeather();
@@ -93,12 +102,25 @@ public class DashboardFragment extends Fragment {
         weekView.setText(weekFormat.format(now));
 
         String newTime = timeFormat.format(now);
-        if (!newTime.equals(timeView.getText().toString())) {
-            timeView.setText(newTime);
-            timeView.setTranslationY(14f);
-            timeView.setAlpha(0.7f);
-            timeView.animate().translationY(0f).alpha(1f).setDuration(140L).start();
+        colonView.animate()
+                .cancel();
+        colonView.setAlpha(now.getSeconds() % 2 == 0 ? 1f : 0.6f);
+
+        if (!newTime.equals(lastRenderedTime)) {
+            bindTimeDigits(newTime, !lastRenderedTime.isEmpty());
+            lastRenderedTime = newTime;
         }
+    }
+
+    private void bindTimeDigits(@NonNull String timeValue, boolean animate) {
+        if (timeValue.length() < 5) {
+            return;
+        }
+
+        hourTensView.setDigit(timeValue.charAt(0), animate);
+        hourOnesView.setDigit(timeValue.charAt(1), animate);
+        minuteTensView.setDigit(timeValue.charAt(3), animate);
+        minuteOnesView.setDigit(timeValue.charAt(4), animate);
     }
 
     private void updateWeather() {
