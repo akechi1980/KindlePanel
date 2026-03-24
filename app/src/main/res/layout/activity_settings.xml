@@ -5,6 +5,7 @@
     android:background="@drawable/bg_app"
     android:fillViewport="true">
 
+    <!-- 设定页保持单列滚动布局，方便旧平板稳定渲染。 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -98,6 +99,7 @@
             android:textColor="@color/text_primary"
             android:textSize="18sp" />
 
+        <!-- 保存与恢复默认设定只保留最小操作集。 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

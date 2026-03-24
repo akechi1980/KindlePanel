@@ -23,6 +23,10 @@ import com.kindlepanel.R;
 import com.kindlepanel.config.AppSettings;
 import com.kindlepanel.config.SettingsRepository;
 
+/**
+ * 网页模式。
+ * 使用轻量 WebView 全屏展示配置网页，并支持定时刷新。
+ */
 public class WebModeFragment extends Fragment {
 
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -31,6 +35,7 @@ public class WebModeFragment extends Fragment {
         public void run() {
             if (webView != null) {
                 webView.reload();
+                // 自动刷新设置保留最小值，避免频繁重载干扰展示。
                 int delay = Math.max(settings.webRefreshSeconds, 30) * 1000;
                 handler.postDelayed(this, delay);
             }
@@ -89,6 +94,7 @@ public class WebModeFragment extends Fragment {
 
     private void setupWebView() {
         WebSettings webSettings = webView.getSettings();
+        // 仅开启当前场景确实需要的能力，避免叠加多余配置。
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
         webSettings.setBuiltInZoomControls(false);
@@ -147,11 +153,13 @@ public class WebModeFragment extends Fragment {
     }
 
     private void showError() {
+        // 加载失败时只显示中文提示，不暴露浏览器式复杂界面。
         errorView.setVisibility(View.VISIBLE);
         errorView.setText(getString(R.string.web_error_hint));
     }
 
     private void persistCurrentUrl(@Nullable String url) {
+        // 记录当前真实页面地址，便于后续回写为默认地址。
         if (!TextUtils.isEmpty(url)) {
             settingsRepository.saveCurrentWebUrl(url);
         }

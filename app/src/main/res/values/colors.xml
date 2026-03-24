@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 整体采用暗色、仪表盘感的保守配色。 -->
     <color name="bg_primary">#080B10</color>
     <color name="bg_panel">#121821</color>
     <color name="bg_overlay">#C61A2330</color>

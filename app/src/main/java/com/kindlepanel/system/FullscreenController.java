@@ -6,6 +6,10 @@ import android.view.Window;
 
 import androidx.annotation.NonNull;
 
+/**
+ * 统一处理沉浸式全屏。
+ * 为兼容旧版系统，按系统版本分别走新旧两套写法。
+ */
 public final class FullscreenController {
 
     private FullscreenController() {

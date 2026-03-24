@@ -17,6 +17,10 @@ import com.kindlepanel.config.SettingsRepository;
 import com.kindlepanel.mode.DisplayMode;
 import com.kindlepanel.mode.photo.PhotoPlayMode;
 
+/**
+ * 应用设定页。
+ * 负责编辑并保存轻量配置，不承载复杂业务逻辑。
+ */
 public class SettingsActivity extends AppCompatActivity {
 
     private Spinner modeSpinner;
@@ -62,6 +66,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void setupSpinners() {
+        // 下拉项全部来自本地中文资源，避免硬编码分散。
         ArrayAdapter<CharSequence> modeAdapter = ArrayAdapter.createFromResource(
                 this, R.array.default_mode_labels, android.R.layout.simple_spinner_item);
         modeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -105,6 +110,7 @@ public class SettingsActivity extends AppCompatActivity {
         try {
             return Integer.parseInt(rawValue.trim());
         } catch (Exception ignored) {
+            // 输入非法时回退默认值，优先保证设定页稳定可保存。
             return defaultValue;
         }
     }

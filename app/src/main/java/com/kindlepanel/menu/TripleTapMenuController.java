@@ -6,6 +6,9 @@ import android.view.MotionEvent;
 
 import androidx.annotation.NonNull;
 
+/**
+ * 负责识别空白区域三击手势，并控制浮层自动隐藏时机。
+ */
 public class TripleTapMenuController {
 
     private static final long TRIPLE_TAP_WINDOW_MS = 800L;
@@ -31,6 +34,7 @@ public class TripleTapMenuController {
             return;
         }
 
+        // 使用短时间窗口累计点击次数，避免引入更重的手势系统。
         long now = System.currentTimeMillis();
         if (now - lastTapTimestamp <= TRIPLE_TAP_WINDOW_MS) {
             tapCount++;
@@ -59,6 +63,7 @@ public class TripleTapMenuController {
     }
 
     private void scheduleAutoHide() {
+        // 每次交互都重置隐藏计时，让浮层只在短暂停留时可见。
         handler.removeCallbacks(hideRunnable);
         handler.postDelayed(hideRunnable, AUTO_HIDE_MS);
     }

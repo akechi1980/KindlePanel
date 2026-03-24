@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- 仅声明当前三种模式实际需要的基础权限。 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
@@ -15,10 +16,12 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.KindlePanel"
         android:usesCleartextTraffic="true">
+        <!-- 设定页固定横屏，保持与展示模式一致。 -->
         <activity
             android:name=".settings.SettingsActivity"
             android:exported="false"
             android:screenOrientation="landscape" />
+        <!-- 主界面直接作为启动入口，默认以横屏全屏方式运行。 -->
         <activity
             android:name=".MainActivity"
             android:exported="true"

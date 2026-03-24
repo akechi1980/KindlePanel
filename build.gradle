@@ -1,3 +1,4 @@
+// 根工程只声明 Android 构建插件版本，保持结构尽量轻量。
 plugins {
     id 'com.android.application' version '8.5.2' apply false
 }

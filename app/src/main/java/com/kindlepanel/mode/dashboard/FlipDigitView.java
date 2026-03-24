@@ -11,6 +11,10 @@ import androidx.annotation.Nullable;
 
 import com.kindlepanel.R;
 
+/**
+ * 轻量翻页数字卡片。
+ * 这里只模拟机械翻片的视觉感，不做复杂 3D 效果。
+ */
 public class FlipDigitView extends FrameLayout {
 
     private TextView currentDigitView;
@@ -44,6 +48,7 @@ public class FlipDigitView extends FrameLayout {
         }
 
         if (currentDigit == '\0' || !animate) {
+            // 初次绑定或禁用动画时直接落位，避免无意义过渡。
             currentDigit = digit;
             currentDigitView.setText(String.valueOf(digit));
             incomingDigitView.setText("");
@@ -55,6 +60,7 @@ public class FlipDigitView extends FrameLayout {
         incomingDigitView.animate().cancel();
         currentDigitView.animate().cancel();
 
+        // 通过位移和缩放制造轻量机械翻动感，兼顾旧设备性能。
         incomingDigitView.setText(String.valueOf(digit));
         incomingDigitView.setTranslationY(getHeight() * 0.18f);
         incomingDigitView.setScaleY(1.08f);

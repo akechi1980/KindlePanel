@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_app">
 
+    <!-- 相册图片全屏承载，切换时只做轻量淡入。 -->
     <ImageView
         android:id="@+id/image_photo"
         android:layout_width="match_parent"
@@ -12,6 +13,7 @@
         android:contentDescription="@string/photo_content_desc"
         android:scaleType="fitCenter" />
 
+    <!-- 当目录为空或图片解码失败时显示中文提示。 -->
     <TextView
         android:id="@+id/text_photo_placeholder"
         android:layout_width="wrap_content"

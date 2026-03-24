@@ -1,3 +1,4 @@
+// 仓库源集中放在根配置，避免子模块自行声明导致行为分散。
 pluginManagement {
     repositories {
         google()

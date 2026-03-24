@@ -5,6 +5,9 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 
+/**
+ * 集中处理前台常亮标记。
+ */
 public class ScreenAwakeController {
 
     private final Window window;

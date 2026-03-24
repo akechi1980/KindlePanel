@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- 雪天图标。 -->
+    <path
+        android:pathData="M8,14.8C5.8,14.8 4,13 4,10.8C4,8.7 5.6,7 7.7,6.8C8.5,4.4 10.8,2.8 13.4,2.8C16.7,2.8 19.4,5.4 19.4,8.7C20.9,9.1 22,10.5 22,12.1C22,13.6 20.8,14.8 19.3,14.8H8Z"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/text_primary"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.5" />
+    <path
+        android:pathData="M9,17.2L9,20.4M7.4,18.8L10.6,18.8M13,17.2L13,20.4M11.4,18.8L14.6,18.8M17,17.2L17,20.4M15.4,18.8L18.6,18.8"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/accent"
+        android:strokeLineCap="round"
+        android:strokeWidth="1.4" />
+</vector>

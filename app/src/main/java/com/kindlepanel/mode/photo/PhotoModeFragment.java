@@ -27,6 +27,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+/**
+ * 相册模式。
+ * 负责从本地目录读取图片，并以顺序或随机方式轻量轮播。
+ */
 public class PhotoModeFragment extends Fragment {
 
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -35,6 +39,7 @@ public class PhotoModeFragment extends Fragment {
         @Override
         public void run() {
             showNextPhoto();
+            // 切换间隔设下限，防止误设为过快导致频繁解码。
             int delay = Math.max(settings.photoIntervalSeconds, 3) * 1000;
             handler.postDelayed(this, delay);
         }
@@ -98,6 +103,7 @@ public class PhotoModeFragment extends Fragment {
             currentIndex = (currentIndex + 1) % images.size();
         }
 
+        // 只做淡入，避免旧设备上频繁切换带来的掉帧。
         imageView.setAlpha(0f);
         Bitmap bitmap = decodeSampledBitmap(file);
         if (bitmap == null) {
@@ -148,6 +154,7 @@ public class PhotoModeFragment extends Fragment {
 
     @Nullable
     private Bitmap decodeSampledBitmap(@NonNull File file) {
+        // 先读尺寸再按目标区域缩放，降低大图加载时的内存占用。
         BitmapFactory.Options boundsOptions = new BitmapFactory.Options();
         boundsOptions.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(file.getAbsolutePath(), boundsOptions);

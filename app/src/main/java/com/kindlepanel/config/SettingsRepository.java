@@ -8,6 +8,10 @@ import androidx.annotation.NonNull;
 import com.kindlepanel.mode.DisplayMode;
 import com.kindlepanel.mode.photo.PhotoPlayMode;
 
+/**
+ * 统一管理应用设定的持久化读写。
+ * 采用 SharedPreferences，减少依赖并兼顾旧系统兼容性。
+ */
 public class SettingsRepository {
 
     private static final String PREFS_NAME = "kindle_panel_settings";
@@ -31,6 +35,7 @@ public class SettingsRepository {
 
     @NonNull
     public AppSettings getSettings() {
+        // 每次读取时基于默认值兜底，避免旧配置缺字段导致异常。
         AppSettings defaults = AppSettings.defaultSettings();
         AppSettings settings = new AppSettings();
         settings.defaultMode = DisplayMode.fromValue(sharedPreferences.getString(KEY_DEFAULT_MODE, defaults.defaultMode.name()));
@@ -46,6 +51,7 @@ public class SettingsRepository {
     }
 
     public void save(@NonNull AppSettings settings) {
+        // 当前设定以原子方式一次性写入，降低不完整状态风险。
         sharedPreferences.edit()
                 .putString(KEY_DEFAULT_MODE, settings.defaultMode.name())
                 .putString(KEY_WEB_URL, settings.webUrl)
@@ -64,6 +70,7 @@ public class SettingsRepository {
     }
 
     public void saveCurrentWebUrl(@NonNull String url) {
+        // 单独记录 WebView 当前地址，便于后续将实际页面回写为默认值。
         sharedPreferences.edit()
                 .putString(KEY_CURRENT_WEB_URL, url)
                 .apply();

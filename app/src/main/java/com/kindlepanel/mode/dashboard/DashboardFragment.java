@@ -24,6 +24,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * 本地看板模式。
+ * 左侧显示日期和翻页时钟，右侧显示简化天气信息。
+ */
 public class DashboardFragment extends Fragment {
 
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -32,6 +36,15 @@ public class DashboardFragment extends Fragment {
         public void run() {
             updateClock();
             handler.postDelayed(this, 1000L);
+        }
+    };
+    private final Runnable weatherRunnable = new Runnable() {
+        @Override
+        public void run() {
+            requestWeatherRefresh();
+            // 刷新频率设下限，避免旧设备或弱网络环境下请求过密。
+            int refreshMinutes = Math.max(settingsRepository.getSettings().weatherRefreshMinutes, 10);
+            handler.postDelayed(this, refreshMinutes * 60L * 1000L);
         }
     };
 
@@ -48,6 +61,8 @@ public class DashboardFragment extends Fragment {
     private FlipDigitView minuteTensView;
     private FlipDigitView minuteOnesView;
     private String lastRenderedTime = "";
+    private SettingsRepository settingsRepository;
+    private WeatherRepository weatherRepository;
 
     public static DashboardFragment newInstance() {
         return new DashboardFragment();
@@ -75,6 +90,8 @@ public class DashboardFragment extends Fragment {
         hourOnesView = view.findViewById(R.id.digit_hour_ones);
         minuteTensView = view.findViewById(R.id.digit_minute_tens);
         minuteOnesView = view.findViewById(R.id.digit_minute_ones);
+        settingsRepository = new SettingsRepository(requireContext());
+        weatherRepository = new WeatherRepository(requireContext());
 
         updateClock();
         updateWeather();
@@ -84,12 +101,14 @@ public class DashboardFragment extends Fragment {
     public void onStart() {
         super.onStart();
         handler.post(clockRunnable);
+        handler.post(weatherRunnable);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         handler.removeCallbacks(clockRunnable);
+        handler.removeCallbacks(weatherRunnable);
     }
 
     private void updateClock() {
@@ -102,8 +121,8 @@ public class DashboardFragment extends Fragment {
         weekView.setText(weekFormat.format(now));
 
         String newTime = timeFormat.format(now);
-        colonView.animate()
-                .cancel();
+        // 冒号只做轻量闪烁，保留节奏感但不做重型动画。
+        colonView.animate().cancel();
         colonView.setAlpha(now.getSeconds() % 2 == 0 ? 1f : 0.6f);
 
         if (!newTime.equals(lastRenderedTime)) {
@@ -124,8 +143,36 @@ public class DashboardFragment extends Fragment {
     }
 
     private void updateWeather() {
-        AppSettings settings = new SettingsRepository(requireContext()).getSettings();
-        WeatherInfo info = new WeatherRepository().loadPreview(settings.weatherCity);
+        AppSettings settings = settingsRepository.getSettings();
+        // 先显示缓存或占位内容，让页面首帧更稳定。
+        bindWeather(weatherRepository.loadPreview(settings.weatherCity));
+    }
+
+    private void requestWeatherRefresh() {
+        AppSettings settings = settingsRepository.getSettings();
+        weatherRepository.requestWeather(settings.weatherCity, new WeatherRepository.Callback() {
+            @Override
+            public void onWeatherLoaded(@NonNull WeatherInfo weatherInfo) {
+                if (!isAdded()) {
+                    return;
+                }
+                bindWeather(weatherInfo);
+            }
+
+            @Override
+            public void onWeatherUnavailable() {
+                if (!isAdded()) {
+                    return;
+                }
+                WeatherInfo preview = weatherRepository.loadPreview(settings.weatherCity);
+                // 失败时保留可展示内容，只替换为明确中文提示。
+                preview.description = "天气获取失败";
+                bindWeather(preview);
+            }
+        });
+    }
+
+    private void bindWeather(@NonNull WeatherInfo info) {
         weatherIconView.setImageResource(WeatherIconMapper.map(info.conditionCode));
         cityView.setText(info.city);
         descView.setText(info.description);

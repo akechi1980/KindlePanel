@@ -1,3 +1,4 @@
+# Android Studio 和 Gradle 常见生成物不进入版本库。
 *.iml
 .gradle/
 /.gradle-user-home/

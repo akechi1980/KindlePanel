@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
+    <!-- 允许内网明文地址，兼容本地 Grafana 等旧环境接入方式。 -->
     <base-config cleartextTrafficPermitted="true" />
 </network-security-config>

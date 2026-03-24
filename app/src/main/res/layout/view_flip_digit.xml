@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_flip_digit_card">
 
+    <!-- 上下半片只承担视觉层次，不做真实机械翻页拆分。 -->
     <View
         android:layout_width="match_parent"
         android:layout_height="62dp"
@@ -34,6 +35,7 @@
         android:textStyle="bold"
         android:alpha="0" />
 
+    <!-- 中线和铰点用于强化翻片时钟的机械感。 -->
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"

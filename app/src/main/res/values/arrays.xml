@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 下拉选项全部中文化，避免在 Java 代码里硬编码。 -->
     <string-array name="default_mode_labels">
         <item>本地看板模式</item>
         <item>网页模式</item>
