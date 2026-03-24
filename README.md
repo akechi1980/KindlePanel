@@ -2,6 +2,20 @@
 
 一个面向旧安卓平板的轻量级全屏看板应用，当前目标设备为 Kindle Fire HD 8 第 7 代一类老设备。
 
+## 界面预览
+
+看板模式
+
+![看板模式](docs/screenshots/dashboard.png)
+
+网页模式（Grafana 面板）
+
+![网页模式](docs/screenshots/web-mode.png)
+
+相册模式
+
+![相册模式](docs/screenshots/photo-mode.png)
+
 ## 当前功能
 
 - 本地看板模式
