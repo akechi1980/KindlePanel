@@ -55,20 +55,18 @@
 ### Debug 安装
 
 ```bash
-GRADLE_USER_HOME='/Volumes/StoreDSK/WorkSpaces/KindlePanel/.gradle-user-home' \
-JAVA_HOME='/Volumes/StoreDSK/Softs/Android/Android Studio.app/Contents/jbr/Contents/Home' \
-ANDROID_HOME='/Volumes/StoreDSK/Softs/Android/sdk' \
-ANDROID_SDK_ROOT='/Volumes/StoreDSK/Softs/Android/sdk' \
+export JAVA_HOME="/path/to/your/jdk"
+export ANDROID_HOME="/path/to/your/android-sdk"
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
 ./gradlew installDebug --no-daemon
 ```
 
 ### Release 构建
 
 ```bash
-GRADLE_USER_HOME='/Volumes/StoreDSK/WorkSpaces/KindlePanel/.gradle-user-home' \
-JAVA_HOME='/Volumes/StoreDSK/Softs/Android/Android Studio.app/Contents/jbr/Contents/Home' \
-ANDROID_HOME='/Volumes/StoreDSK/Softs/Android/sdk' \
-ANDROID_SDK_ROOT='/Volumes/StoreDSK/Softs/Android/sdk' \
+export JAVA_HOME="/path/to/your/jdk"
+export ANDROID_HOME="/path/to/your/android-sdk"
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
 ./gradlew assembleRelease --no-daemon
 ```
 
@@ -97,7 +95,7 @@ ANDROID_SDK_ROOT='/Volumes/StoreDSK/Softs/Android/sdk' \
 ADB 安装示例：
 
 ```bash
-'/Volumes/StoreDSK/Softs/Android/sdk/platform-tools/adb' install -r \
+adb install -r \
 app/build/outputs/apk/release/app-release-debugsigned.apk
 ```
 

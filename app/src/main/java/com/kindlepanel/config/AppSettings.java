@@ -23,7 +23,8 @@ public class AppSettings {
         // 默认值保持保守，优先让旧平板开箱即可进入看板模式。
         AppSettings settings = new AppSettings();
         settings.defaultMode = DisplayMode.DASHBOARD;
-        settings.webUrl = "http://192.168.0.200:3000/d/kindle-hd8-overview/83869f0?orgId=1&from=now-1h&to=now&timezone=browser&refresh=30s";
+        // 默认网页地址使用通用示例，避免把个人内网地址写入公开仓库。
+        settings.webUrl = "http://192.168.1.100:3000";
         settings.webRefreshSeconds = 300;
         settings.weatherCity = "杭州";
         settings.weatherRefreshMinutes = 30;
