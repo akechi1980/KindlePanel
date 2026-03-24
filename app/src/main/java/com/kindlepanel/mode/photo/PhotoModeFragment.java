@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.kindlepanel.config.SettingsRepository;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -33,12 +35,14 @@ import java.util.Random;
  */
 public class PhotoModeFragment extends Fragment {
 
+    private static final String TAG = "PhotoMode";
+
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Random random = new Random();
     private final Runnable photoRunnable = new Runnable() {
         @Override
         public void run() {
-            showNextPhoto();
+            showNextPhotoSafely();
             // 切换间隔设下限，防止误设为过快导致频繁解码。
             int delay = Math.max(settings.photoIntervalSeconds, 3) * 1000;
             handler.postDelayed(this, delay);
@@ -50,6 +54,7 @@ public class PhotoModeFragment extends Fragment {
     private AppSettings settings;
     private List<File> images = new ArrayList<>();
     private int currentIndex;
+    private Bitmap currentBitmap;
 
     public static PhotoModeFragment newInstance() {
         return new PhotoModeFragment();
@@ -69,7 +74,7 @@ public class PhotoModeFragment extends Fragment {
         placeholderView = view.findViewById(R.id.text_photo_placeholder);
         settings = new SettingsRepository(requireContext()).getSettings();
         images = loadImages(settings.photoDirectory);
-        showNextPhoto();
+        showNextPhotoSafely();
     }
 
     @Override
@@ -84,36 +89,51 @@ public class PhotoModeFragment extends Fragment {
         handler.removeCallbacks(photoRunnable);
     }
 
+    @Override
+    public void onDestroyView() {
+        handler.removeCallbacks(photoRunnable);
+        releaseCurrentBitmap();
+        imageView = null;
+        placeholderView = null;
+        super.onDestroyView();
+    }
+
+    private void showNextPhotoSafely() {
+        try {
+            showNextPhoto();
+        } catch (Throwable throwable) {
+            // 旧设备上即使遇到坏图或内存压力，也优先保住主界面不退出。
+            Log.e(TAG, "Failed to show photo", throwable);
+            showPlaceholder(getString(R.string.photo_decode_error_hint, "图片不可用"));
+        }
+    }
+
     private void showNextPhoto() {
         if (images.isEmpty()) {
-            placeholderView.setVisibility(View.VISIBLE);
-            imageView.setVisibility(View.GONE);
-            placeholderView.setText(getString(R.string.photo_empty_hint, settings.photoDirectory));
+            showPlaceholder(getString(R.string.photo_empty_hint, settings.photoDirectory));
             return;
         }
 
-        placeholderView.setVisibility(View.GONE);
-        imageView.setVisibility(View.VISIBLE);
-
-        File file;
-        if (settings.photoPlayMode == PhotoPlayMode.RANDOM) {
-            file = images.get(random.nextInt(images.size()));
-        } else {
-            file = images.get(currentIndex);
-            currentIndex = (currentIndex + 1) % images.size();
+        // 依次尝试可用图片，遇到单张坏图时直接跳过，不让整个模式失败。
+        for (int attempt = 0; attempt < images.size(); attempt++) {
+            File file = nextPhotoFile();
+            try {
+                Bitmap bitmap = decodeSampledBitmap(file);
+                if (bitmap == null) {
+                    Log.w(TAG, "Bitmap decode returned null for " + file.getAbsolutePath());
+                    continue;
+                }
+                showBitmap(bitmap);
+                return;
+            } catch (OutOfMemoryError error) {
+                Log.e(TAG, "Out of memory while decoding " + file.getAbsolutePath(), error);
+                releaseCurrentBitmap();
+            } catch (Throwable throwable) {
+                Log.e(TAG, "Failed to decode " + file.getAbsolutePath(), throwable);
+            }
         }
 
-        // 只做淡入，避免旧设备上频繁切换带来的掉帧。
-        imageView.setAlpha(0f);
-        Bitmap bitmap = decodeSampledBitmap(file);
-        if (bitmap == null) {
-            placeholderView.setVisibility(View.VISIBLE);
-            imageView.setVisibility(View.GONE);
-            placeholderView.setText(getString(R.string.photo_decode_error_hint, file.getName()));
-            return;
-        }
-        imageView.setImageBitmap(bitmap);
-        imageView.animate().alpha(1f).setDuration(180L).start();
+        showPlaceholder(getString(R.string.photo_decode_error_hint, settings.photoDirectory));
     }
 
     @NonNull
@@ -138,8 +158,15 @@ public class PhotoModeFragment extends Fragment {
                 result.add(file);
             }
         }
-        result.sort((left, right) -> left.getName().toLowerCase(Locale.US)
-                .compareTo(right.getName().toLowerCase(Locale.US)));
+        // 旧版 Android / Fire OS 上避免使用 List.sort，改用兼容性更稳的 Collections.sort。
+        Collections.sort(result, new Comparator<File>() {
+            @Override
+            public int compare(File left, File right) {
+                return left.getName().toLowerCase(Locale.US)
+                        .compareTo(right.getName().toLowerCase(Locale.US));
+            }
+        });
+        Log.d(TAG, "Loaded " + result.size() + " images from " + directoryPath);
         return result;
     }
 
@@ -158,6 +185,9 @@ public class PhotoModeFragment extends Fragment {
         BitmapFactory.Options boundsOptions = new BitmapFactory.Options();
         boundsOptions.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(file.getAbsolutePath(), boundsOptions);
+        if (boundsOptions.outWidth <= 0 || boundsOptions.outHeight <= 0) {
+            return null;
+        }
 
         BitmapFactory.Options decodeOptions = new BitmapFactory.Options();
         decodeOptions.inPreferredConfig = Bitmap.Config.RGB_565;
@@ -173,5 +203,46 @@ public class PhotoModeFragment extends Fragment {
             inSampleSize *= 2;
         }
         return Math.max(inSampleSize, 1);
+    }
+
+    @NonNull
+    private File nextPhotoFile() {
+        if (settings.photoPlayMode == PhotoPlayMode.RANDOM) {
+            return images.get(random.nextInt(images.size()));
+        }
+        File file = images.get(currentIndex);
+        currentIndex = (currentIndex + 1) % images.size();
+        return file;
+    }
+
+    private void showBitmap(@NonNull Bitmap bitmap) {
+        if (placeholderView == null || imageView == null) {
+            return;
+        }
+        placeholderView.setVisibility(View.GONE);
+        imageView.setVisibility(View.VISIBLE);
+        imageView.setAlpha(0f);
+        releaseCurrentBitmap();
+        currentBitmap = bitmap;
+        imageView.setImageBitmap(bitmap);
+        imageView.animate().alpha(1f).setDuration(180L).start();
+    }
+
+    private void showPlaceholder(@NonNull String message) {
+        if (placeholderView == null || imageView == null) {
+            return;
+        }
+        releaseCurrentBitmap();
+        placeholderView.setVisibility(View.VISIBLE);
+        imageView.setVisibility(View.GONE);
+        imageView.setImageDrawable(null);
+        placeholderView.setText(message);
+    }
+
+    private void releaseCurrentBitmap() {
+        if (currentBitmap != null && !currentBitmap.isRecycled()) {
+            currentBitmap.recycle();
+        }
+        currentBitmap = null;
     }
 }
